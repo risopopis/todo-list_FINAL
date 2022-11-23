@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import "./task.css";
 
 export default class TodoListItem extends Component {
+  constructor(){
+    super()
   state = {
     created: new Date(),
     timeToNow: formatDistanceToNow(new Date()),
@@ -11,7 +13,7 @@ export default class TodoListItem extends Component {
     editedValue: "",
     done: false,
   };
-
+}
   componentDidMount() {
     this.timerID = setInterval(() => this.tick(), 1000);
   }
@@ -39,7 +41,7 @@ export default class TodoListItem extends Component {
   setEditedValue = (el) => {
     if (el.key === "Enter" && el.target.value !== "") {
       const { editedValue } = this.state;
-      this.props.editLabel(editedValue, this.props.id);
+      this.props.editLabel(editedValue, this.state.id);
 
       this.setState({
         isEditing: false,
@@ -81,7 +83,7 @@ export default class TodoListItem extends Component {
           className="edit"
           placeholder="Type new label"
           onChange={(e) => {
-            this.setState({ editedValue: e.target.value });
+            this.setState({ editedValue: el.target.value });
           }}
           onKeyDown={this.setEditedValue}
         />
