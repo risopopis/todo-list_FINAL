@@ -37,6 +37,20 @@ export default class App extends Component {
     }
   }
 
+  editLabel = (label, id) => {
+    this.setState(({ todoData }) => {
+      const itemIdx = todoData.findIndex((element) => element.id === id)
+
+      return {
+        todoData: [
+          ...todoData.slice(0, itemIdx),
+          { ...todoData[itemIdx], label: label },
+          ...todoData.slice(itemIdx + 1),
+        ],
+      }
+    })
+  }
+
   createTodoItem(label) {
     return {
       label,
@@ -91,20 +105,6 @@ export default class App extends Component {
   clearCompleted = () => {
     this.setState({
       todoData: this.state.todoData.filter((item) => !item.done),
-    })
-  }
-
-  editLabel = (label, id) => {
-    this.setState(({ todoData }) => {
-      const itemIdx = todoData.findIndex((element) => element.id === id)
-
-      return {
-        todoData: [
-          ...todoData.slice(0, itemIdx),
-          { ...todoData[itemIdx], label: label },
-          ...todoData.slice(itemIdx + 1),
-        ],
-      }
     })
   }
 

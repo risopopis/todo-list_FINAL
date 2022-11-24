@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import TodoListItem from '../Task/task'
+import Task from '../Task/task'
 
 import './task-list.css'
 
@@ -9,7 +9,7 @@ function TodoList({ todos, onDeleted, onToggleDone, editLabel }) {
   const elements = todos.map((item) => {
     const { id, ...itemProps } = item
     return (
-      <TodoListItem {...itemProps} key={id} id={id} onDeleted={() => onDeleted(id)} onToggleDone={() => onToggleDone(id)} editLabel={editLabel}/>
+      <Task {...itemProps} key={id} id={id} onDeleted={() => onDeleted(id)} onToggleDone={() => onToggleDone(id)} editLabel={editLabel}/>
     )
   })
   return <ul className="todo-list">{elements}</ul>
@@ -18,8 +18,7 @@ function TodoList({ todos, onDeleted, onToggleDone, editLabel }) {
 TodoList.defaultProps = {
   todos: [],
   onDeleted: () => {},
-  onToggleDone: () => {},
-  editLabel: () => {}
+  onToggleDone: () => {}
 }
 
 TodoList.propTypes = {
