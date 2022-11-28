@@ -12,20 +12,26 @@ function TodoList({ todos, onDeleted, onToggleDone, editLabel }) {
       <Task {...itemProps} key={id} id={id} onDeleted={() => onDeleted(id)} onToggleDone={() => onToggleDone(id)} editLabel={editLabel}/>
     )
   })
-  return <ul className="todo-list">{elements}</ul>
+  return (
+  <div>
+    <ul className="todo-list">{elements} </ul>
+    
+    </div>)
 }
 
 TodoList.defaultProps = {
   todos: [],
   onDeleted: () => {},
-  onToggleDone: () => {}
+  onToggleDone: () => {},
+  onCreated: ()=>{}
 }
 
 TodoList.propTypes = {
   todos: PropTypes.array,
   onDeleted: PropTypes.func,
   onToggleDone: PropTypes.func,
-  editLabel: PropTypes.func
+  editLabel: PropTypes.func,
+
 }
 
 export default TodoList

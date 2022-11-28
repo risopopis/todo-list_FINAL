@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { formatDistanceToNow } from "date-fns";
 import PropTypes from "prop-types";
-
-
+import { formatDistanceToNow } from 'date-fns'
 import "./task.css";
 
 export default class TodoListItem extends Component {
@@ -11,6 +9,23 @@ export default class TodoListItem extends Component {
     timeToNow: formatDistanceToNow(new Date()),
     isEditing: false,
     editedValue: ''
+  }
+
+  
+  switchEditing = () => {
+    this.setState({
+      isEditing: !this.state.isEditing
+    })
+  }
+
+  setEditedValue = (e) => {
+    if (e.key === 'Enter' && e.target.value !== ''){
+      const { editedValue } = this.state
+      this.props.editLabel(editedValue, this.props.id)
+      this.setState({
+        isEditing: false
+      })
+    }
   }
 
   componentDidMount() {
@@ -25,36 +40,20 @@ export default class TodoListItem extends Component {
     this.setState({ timeToNow: formatDistanceToNow(this.state.created) })
   }
 
-  switchEditing = () => {
-    this.setState({
-      isEditing: !this.state.isEditing
-    })
-  }
-
-  setEditedValue = (e) => {
-    if (e.key === 'Enter' && e.target.value !== ''){
-      const { editedValue } = this.state
-      this.props.editLabel(editedValue, this.props.id)
-      
-      this.setState({
-        isEditing: false
-      })
-    }
-  }
 
   render() {
     const {
-      label, onDeleted, onToggleDone, done,
+      label, onDeleted, onToggleDone, done
     } = this.props
 
-    let classNames = ''
+    let classNames = 'list'
 
     if (done) {
-      classNames += 'completed'
+      classNames += ' completed'
     }
     
     if (this.state.isEditing){
-      classNames = 'editing'
+      classNames = 'list__editing'
     }
 
     return (
@@ -66,7 +65,7 @@ export default class TodoListItem extends Component {
             onChange={onToggleDone}
             defaultChecked={done}
           />
-          <label>
+          <label className="label">
             <span className='description'>{label}</span>
             <span className='created'>
               Created {' '}

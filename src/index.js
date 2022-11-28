@@ -68,7 +68,6 @@ export default class App extends Component {
   deleteItem = (id) => {
     this.setState(({ todoData }) => {
       const itemIdx = todoData.findIndex((element) => element.id === id)
-
       return {
         todoData: [
           ...todoData.slice(0, itemIdx),
@@ -124,6 +123,7 @@ export default class App extends Component {
           onToggleDone={this.onToggleDone}
           editLabel={this.editLabel}
         />
+
         <Footer
           left={todoLeft}
           filter={filter}

@@ -10,20 +10,20 @@ export default class Footer extends Component {
     { name: "completed", label: "Completed" },
   ];
 
+  
+
   render() {
     const { left, filter, switchFilter, clearCompleted } = this.props;
-
     const buttons = this.buttonsData.map(({ name, label }) => (
-      <li key={name}>
-        <button
-          type="button"
-          className={filter === name ? "selected" : ""}
-          onClick={() => {
-            switchFilter(name);
-          }}
-        >
-          {label}
-        </button>
+      <li className="btn-filter-item" key={name}>
+        <input type="radio" id={name}
+        name="radio-btn"
+        className="radio-btn"/>
+        <htmlFor id={name}
+        className={filter === name ? "selected" : ""}
+        onClick={() => {
+        switchFilter(name);
+        }}>{label}</htmlFor>
       </li>
     ));
 
