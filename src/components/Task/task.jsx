@@ -42,7 +42,7 @@ export default class TodoListItem extends Component {
 
   render() {
     const {
-      label, onDeleted, onToggleDone, done, created
+      label, onDeleted, onToggleDone, done
     } = this.props
 
     let classNames = 'list'
@@ -59,7 +59,7 @@ export default class TodoListItem extends Component {
       <li className={classNames}>
         <div className='view'>
           <input
-            className='toggle'
+            className='task__toggle'
             type='checkbox'
             onChange={onToggleDone}
             defaultChecked={done}
