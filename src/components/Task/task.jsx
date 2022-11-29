@@ -5,8 +5,7 @@ import "./task.css";
 
 export default class TodoListItem extends Component {
   state = {
-    created: new Date(),
-    timeToNow: formatDistanceToNow(new Date()),
+    timeToNow: formatDistanceToNow(this.props.created),
     isEditing: false,
     editedValue: ''
   }
@@ -37,13 +36,13 @@ export default class TodoListItem extends Component {
   }
 
   tick() {
-    this.setState({ timeToNow: formatDistanceToNow(this.state.created) })
+    this.setState({ timeToNow: formatDistanceToNow(this.props.created) })
   }
 
 
   render() {
     const {
-      label, onDeleted, onToggleDone, done
+      label, onDeleted, onToggleDone, done, created
     } = this.props
 
     let classNames = 'list'
@@ -102,5 +101,6 @@ TodoListItem.propTypes = {
   onToggleDone: PropTypes.func,
   done: PropTypes.bool,
   editLabel: PropTypes.func,
-  id: PropTypes.number
+  id: PropTypes.number,
+  created: PropTypes.string
 }

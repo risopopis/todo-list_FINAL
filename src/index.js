@@ -56,6 +56,7 @@ export default class App extends Component {
       label,
       done: false,
       id: this.maxId(),
+      created: Date.now(),
     }
   }
 
