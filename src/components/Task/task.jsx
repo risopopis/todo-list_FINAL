@@ -41,23 +41,24 @@ export default class TodoListItem extends Component {
 
 
   render() {
+     let classNames = require('classnames')
     const {
       label, onDeleted, onToggleDone, done
     } = this.props
 
-    let classNames = 'list'
+    let liClasses = classNames({
+    'todo-list__li': true,
+      ' completed': done,
 
-    if (done) {
-      classNames += ' completed'
-    }
+    })
     
     if (this.state.isEditing){
-      classNames = 'list__editing'
+      liClasses = 'todo-list__li_editing'
     }
 
     return (
-      <li className={classNames}>
-        <div className='view'>
+      <li className={liClasses}>
+        <div className='task'>
           <input
             className='task__toggle'
             type='checkbox'

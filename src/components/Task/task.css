@@ -5,16 +5,16 @@
 	list-style: none;
 }
 
-.todo-list .list {
+.todo-list .todo-list__li {
 	position: relative;
 	font-size: 24px;
 	border-bottom: 1px solid #ededed;
 }
 
-.todo-list .list:last-child {
+.todo-list .todo-list__li:last-child {
 	border-bottom: none;
 }
- .list__editing{
+ .todo-list__li_editing{
 	border-bottom: none;
 	padding: 0;
 }
@@ -26,7 +26,7 @@
     margin: 0 0 0 43px;
 }
 
- .list__editing .view {
+ .todo-list__li_editing .task {
 	display: none;
 }
 
@@ -66,19 +66,19 @@
 	transform: scale(1);
 }
 
-.todo-list .list .label {
+.todo-list .todo-list__li .label {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding: 15px 85px 15px 60px;
 }
 
-.todo-list .list .label .created {
+.todo-list .todo-list__li .label .created {
 	font-size: 13px;
 	color: gray;
 }
 
-.todo-list .list .label .description {
+.todo-list .todo-list__li .label .description {
 	word-break: break-all;
 	display: block;
 	line-height: 1.2;
@@ -87,12 +87,12 @@
 	color: #4d4d4d;
 }
 
-.todo-list .list .done .label .description {
+.todo-list .todo-list__li .done .label .description {
 	color: #cdcdcd;
 	text-decoration: line-through;
 }
 
-.todo-list .list .icon {
+.todo-list .todo-list__li .icon {
 	position: absolute;
 	top: 0;
 	bottom: -3px;
@@ -105,32 +105,32 @@
 	cursor: pointer;
 }
 
-.todo-list .list .icon:hover {
+.todo-list .todo-list__li .icon:hover {
 	color: #af5b5e;
 }
 
-.todo-list .list .icon-destroy {
+.todo-list .todo-list__li .icon-destroy {
 	right: 10px;
 }
 
-.todo-list .list .icon-destroy:after {
+.todo-list .todo-list__li .icon-destroy:after {
 	content: '×';
   position: absolute;
   top:-13px
 }
 
-.todo-list .list .icon-edit {
+.todo-list .todo-list__li .icon-edit {
 	font-size: 19px;
 	right: 45px;
 }
 
-.todo-list .list .icon-edit:after {
+.todo-list .ltodo-list__li .icon-edit:after {
 	content: '✎';
   position: absolute;
   top: -7px
 }
 
-.todo-list .list .edit {
+.todo-list .todo-list__li .edit {
 	display: none;
 }
 
