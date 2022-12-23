@@ -52,14 +52,14 @@ export default class App extends Component {
   }
 
   createTodoItem(label, min = 0, sec = 0) {
-    const timeLeft = Number(min) * 60 + Number(sec)
     return {
       label,
       done: false,
       id: this.maxId(),
       created: Date.now(),
-      min,
-      sec,
+      timeLeft: min * 60 + sec,
+      isTimerActive: false,
+      timerStartedAt: null,
     }
   }
 
@@ -111,13 +111,20 @@ export default class App extends Component {
     })
   }
 
-  onTimerChange = (min, sec, id) => {
+  onTimerStatusChange = (id) => {
     this.setState(({ todoData }) => {
       const index = todoData.findIndex((element) => element.id === id)
-
       const oldItem = todoData[index]
-      const newItem = { ...oldItem, timeLeft: sec <= 0 ? 0 : sec }
-
+      const newItem = {
+        ...oldItem,
+        isTimerActive: !oldItem.isTimerActive,
+        timeLeft: oldItem.isTimerActive
+          ? Math.round(
+              oldItem.timeLeft - (Date.now() - oldItem.timerStartedAt) / 1000
+            )
+          : oldItem.timeLeft,
+        timerStartedAt: !oldItem.isTimerActive ? Date.now() : null,
+      }
       const newArr = [
         ...todoData.slice(0, index),
         newItem,
@@ -144,7 +151,7 @@ export default class App extends Component {
           onDeleted={this.deleteItem}
           onToggleDone={this.onToggleDone}
           editLabel={this.editLabel}
-          onTimerChange={this.onTimerChange}
+          onTimerStatusChange={this.onTimerStatusChange}
         />
         <Footer
           left={todoLeft}

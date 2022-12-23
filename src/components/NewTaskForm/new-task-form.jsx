@@ -68,7 +68,7 @@ export default class NewPanel extends Component {
          <input
           type="number"
           min = "0"
-          className="form-control new-input__timer"
+          className="form-control new-input-form__timer"
           placeholder="sec"
           onChange={this.onSecChange}
           onKeyDown={this.onSubmit}

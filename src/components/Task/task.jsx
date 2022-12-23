@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { formatDistanceToNow } from 'date-fns'
 import "./task.css";
-import Timer from "../timer/timer";
+
 
 
 export default class TodoListItem extends Component {
@@ -10,15 +10,18 @@ export default class TodoListItem extends Component {
     timeToNow: formatDistanceToNow(this.props.created),
     isEditing: false,
     editedValue: '',
-    timerActive: true,
-    min: this.props.min,
-    sec:  this.props.sec
+    timerValue: this.getTimerValue(this.props.timeLeft, this.props.timerStartedAt)
   }
 
   switchEditing = () => {
     this.setState({
       isEditing: !this.state.isEditing
     })
+  }
+
+  getTimerValue(s, startedAt){
+   if (startedAt) s -= Math.round((Date.now() - startedAt)/1000)
+    return (s-(s%=60))/60+(9<s? ' min ' :':0')+s+" sec "
   }
 
   setEditedValue = (e) => {
@@ -32,58 +35,46 @@ export default class TodoListItem extends Component {
   }
 
   componentDidMount() {
-    this.timerID = setInterval(() => this.tick(), 1000)
+    if (this.props.isTimerActive){
+      this.timerID = setInterval(() => this.tick(), 1000)
+    }
   }
 
   componentWillUnmount() {
+
     clearInterval(this.timerID)
   }
 
 
-
-  // componentDidUpdate(prevProps, prevState){
-  //   const {timerActive} = this.state
-  //   if (timerActive && prevState !== this.state) {
-  //     this.setState({
-  //       timerActive: !timerActive
-  //     })
-  //   }
-  //   }
-
-
   tick() {
-    this.setState({ timeToNow: formatDistanceToNow(this.props.created) })
+    this.setState((oldState)=>
+    ({ ...oldState, timeToNow: formatDistanceToNow(this.props.created),
+      timerValue: this.getTimerValue(this.props.timeLeft, this.props.timerStartedAt) })
+    )
+  
   }
 
   
-  timerSwitch(){
-    const {timerActive} = this.state
-    this.setState({ timerActive: !timerActive });
-     setInterval(() => {
-      this.timerSec();
-    }, 10)
-   
+  timerSwitch(id){
+    this.props.onTimerStatusChange(id)
+    if (this.timerID){
+      clearInterval(this.timerID)
+      this.timerID = null
+      return 
+    }
+    this.timerID = setInterval(()=>{
+      this.tick()
+    }, 1000)
   }
-
-  timerSec() {
-    let { sec, timerActive } = this.state;
-    if (sec > 0 && timerActive) {
-      setTimeout(() => {
-        this.setState({
-          sec: sec - 1
-      })}, 1000)
-    } 
-  }
-  
 
 
   render() {
      let classNames = require('classnames')
     const {
-      label, onDeleted, onToggleDone, done,
+      label, onDeleted, onToggleDone, done, id
     } = this.props
-    const {min, sec} = this.state
-    const {timerActive} = this.state
+    const {timeLeft} = this.props
+    const {timerValue} = this.state
     let liClasses = classNames({
     'todo-list__li': true,
       ' completed': done,
@@ -93,6 +84,7 @@ export default class TodoListItem extends Component {
     if (this.state.isEditing){
       liClasses = 'todo-list__li_editing'
     }
+
 
     
     return (
@@ -108,34 +100,25 @@ export default class TodoListItem extends Component {
           <label className="label">
             <span className='title'>{label}</span>
             <span className='description'>
-            <div>
-        {sec ? (
+        {timeLeft ? (
           <div>
             <button
             className="icon-play" 
               onClick={() =>
-              this.timerSwitch()
-             
-              }
-            > 
-        </button>
-            <span>{min} min and {sec} sec </span>
+              this.timerSwitch(id)
+             }
+           /> 
+        <button className="icon-pause" 
+        onClick={()=>{
+             this.timerSwitch(id) 
+            }
+            }
+               />
+            <span>{timerValue}</span>
           </div>
-        ) : min>=1 ? 
-        (this.setState({sec: sec + 60,
-          min: min-1, 
-          })) : (
+        ) : (
           <span> время вышло!</span>
         )}
-            <button className="icon-pause" onClick={()=>{
-              this.setState({
-                timerActive: !timerActive
-              })
-            }
-            }
-               ></button>
-      </div>
-           {/* <Timer min = {min} sec = {sec} timerActive = {timerActive} /> */}
             </span>
             <span className='created'>
               Created {' '}
@@ -176,5 +159,9 @@ TodoListItem.propTypes = {
   done: PropTypes.bool,
   editLabel: PropTypes.func,
   id: PropTypes.number,
-  created: PropTypes.number
+  created: PropTypes.number,
+  timeLeft: PropTypes.number,
+  onTimerStatusChange: PropTypes.func,
+  isTimerActive: PropTypes.bool,
+  timerStartedAt: PropTypes.number
 }
