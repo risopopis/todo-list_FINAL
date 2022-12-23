@@ -111,12 +111,12 @@ export default class App extends Component {
     })
   }
 
-  onTimerChange = (time, id) => {
+  onTimerChange = (min, sec, id) => {
     this.setState(({ todoData }) => {
       const index = todoData.findIndex((element) => element.id === id)
 
       const oldItem = todoData[index]
-      const newItem = { ...oldItem, timeLeft: time <= 0 ? 0 : time }
+      const newItem = { ...oldItem, timeLeft: sec <= 0 ? 0 : sec }
 
       const newArr = [
         ...todoData.slice(0, index),

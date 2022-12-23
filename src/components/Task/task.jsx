@@ -11,7 +11,8 @@ export default class TodoListItem extends Component {
     isEditing: false,
     editedValue: '',
     timerActive: true,
-    
+    min: this.props.min,
+    sec:  this.props.sec
   }
 
   switchEditing = () => {
@@ -54,12 +55,34 @@ export default class TodoListItem extends Component {
     this.setState({ timeToNow: formatDistanceToNow(this.props.created) })
   }
 
+  
+  timerSwitch(){
+    const {timerActive} = this.state
+    this.setState({ timerActive: !timerActive });
+     setInterval(() => {
+      this.timerSec();
+    }, 10)
+   
+  }
+
+  timerSec() {
+    let { sec, timerActive } = this.state;
+    if (sec > 0 && timerActive) {
+      setTimeout(() => {
+        this.setState({
+          sec: sec - 1
+      })}, 1000)
+    } 
+  }
+  
+
 
   render() {
      let classNames = require('classnames')
     const {
-      label, min, sec, onDeleted, onToggleDone, done,
+      label, onDeleted, onToggleDone, done,
     } = this.props
+    const {min, sec} = this.state
     const {timerActive} = this.state
     let liClasses = classNames({
     'todo-list__li': true,
@@ -71,7 +94,9 @@ export default class TodoListItem extends Component {
       liClasses = 'todo-list__li_editing'
     }
 
+    
     return (
+      
       <li className={liClasses}>
         <div className='task'>
           <input
@@ -83,8 +108,34 @@ export default class TodoListItem extends Component {
           <label className="label">
             <span className='title'>{label}</span>
             <span className='description'>
-            
-           <Timer min = {min} sec = {sec} timerActive = {timerActive} />
+            <div>
+        {sec ? (
+          <div>
+            <button
+            className="icon-play" 
+              onClick={() =>
+              this.timerSwitch()
+             
+              }
+            > 
+        </button>
+            <span>{min} min and {sec} sec </span>
+          </div>
+        ) : min>=1 ? 
+        (this.setState({sec: sec + 60,
+          min: min-1, 
+          })) : (
+          <span> время вышло!</span>
+        )}
+            <button className="icon-pause" onClick={()=>{
+              this.setState({
+                timerActive: !timerActive
+              })
+            }
+            }
+               ></button>
+      </div>
+           {/* <Timer min = {min} sec = {sec} timerActive = {timerActive} /> */}
             </span>
             <span className='created'>
               Created {' '}

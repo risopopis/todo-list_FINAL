@@ -5,11 +5,11 @@ import Task from '../Task/task'
 
 import './task-list.css'
 
-function TodoList({ todos, onDeleted, onToggleDone, editLabel }) {
+function TodoList({ todos, onDeleted, onToggleDone, editLabel, onTimerChange }) {
   const elements = todos.map((item) => {
     const { id, ...itemProps } = item
     return (
-      <Task {...itemProps} key={id} id={id} onDeleted={() => onDeleted(id)} onToggleDone={() => onToggleDone(id)} editLabel={editLabel}/>
+      <Task {...itemProps} key={id} id={id} onDeleted={() => onDeleted(id)} onToggleDone={() => onToggleDone(id)} editLabel={editLabel} onTimerChange={onTimerChange}/>
     )
   })
   return (
