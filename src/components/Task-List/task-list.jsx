@@ -31,7 +31,7 @@ TodoList.propTypes = {
   onDeleted: PropTypes.func,
   onToggleDone: PropTypes.func,
   editLabel: PropTypes.func,
-
+  onTimerChange: PropTypes.func
 }
 
 export default TodoList

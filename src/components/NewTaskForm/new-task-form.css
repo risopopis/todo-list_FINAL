@@ -4,10 +4,11 @@
 	width: 900px;
 	margin-bottom: 10px;
 }
+
 .new-input {
   position: relative;
 	margin: 0;
-	width: 600px;
+	width: 500px;
 	font-size: 24px;
 	font-family: inherit;
 	font-weight: inherit;
@@ -25,4 +26,12 @@
   font-style: italic;
   font-weight: 19;
   text-align: center;
+}
+
+.new-input__min {
+	width: 50px
+}
+
+.new-input__sec{
+	width: 50px
 }

@@ -2,15 +2,18 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { formatDistanceToNow } from 'date-fns'
 import "./task.css";
+import Timer from "../timer/timer";
+
 
 export default class TodoListItem extends Component {
   state = {
     timeToNow: formatDistanceToNow(this.props.created),
     isEditing: false,
-    editedValue: ''
+    editedValue: '',
+    timerActive: true,
+    
   }
 
-  
   switchEditing = () => {
     this.setState({
       isEditing: !this.state.isEditing
@@ -35,6 +38,18 @@ export default class TodoListItem extends Component {
     clearInterval(this.timerID)
   }
 
+
+
+  // componentDidUpdate(prevProps, prevState){
+  //   const {timerActive} = this.state
+  //   if (timerActive && prevState !== this.state) {
+  //     this.setState({
+  //       timerActive: !timerActive
+  //     })
+  //   }
+  //   }
+
+
   tick() {
     this.setState({ timeToNow: formatDistanceToNow(this.props.created) })
   }
@@ -43,9 +58,9 @@ export default class TodoListItem extends Component {
   render() {
      let classNames = require('classnames')
     const {
-      label, onDeleted, onToggleDone, done
+      label, min, sec, onDeleted, onToggleDone, done,
     } = this.props
-
+    const {timerActive} = this.state
     let liClasses = classNames({
     'todo-list__li': true,
       ' completed': done,
@@ -66,13 +81,18 @@ export default class TodoListItem extends Component {
             defaultChecked={done}
           />
           <label className="label">
-            <span className='description'>{label}</span>
+            <span className='title'>{label}</span>
+            <span className='description'>
+            
+           <Timer min = {min} sec = {sec} timerActive = {timerActive} />
+            </span>
             <span className='created'>
               Created {' '}
               {this.state.timeToNow}
               {' '}
               ago
             </span>
+          
           </label>
           <button className=' btn icon icon-edit' onClick={this.switchEditing}/>
           <button className=' btn icon icon-destroy' onClick={onDeleted} />
@@ -98,10 +118,12 @@ TodoListItem.defaultProps = {
 
 TodoListItem.propTypes = {
   label: PropTypes.string,
+  min: PropTypes.number,
+  sec: PropTypes.number,
   onDeleted: PropTypes.func,
   onToggleDone: PropTypes.func,
   done: PropTypes.bool,
   editLabel: PropTypes.func,
   id: PropTypes.number,
-  created: PropTypes.string
+  created: PropTypes.number
 }

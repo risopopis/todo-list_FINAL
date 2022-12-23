@@ -12,9 +12,9 @@ export default class App extends Component {
     super(),
       (this.state = {
         todoData: [
-          this.createTodoItem("Drink Cofee"),
-          this.createTodoItem("Make Awesome App"),
-          this.createTodoItem("Take a break"),
+          this.createTodoItem("Drink Cofee", 1, 30),
+          this.createTodoItem("Make Awesome App", 1, 30),
+          this.createTodoItem("Take a break", 1, 30),
         ],
         filter: "all",
       })
@@ -51,18 +51,21 @@ export default class App extends Component {
     })
   }
 
-  createTodoItem(label) {
+  createTodoItem(label, min = 0, sec = 0) {
+    const timeLeft = Number(min) * 60 + Number(sec)
     return {
       label,
       done: false,
       id: this.maxId(),
       created: Date.now(),
+      min,
+      sec,
     }
   }
 
-  appendTodoItem(label) {
+  appendTodoItem(label, min, sec) {
     this.setState(({ todoData }) => ({
-      todoData: [...todoData, this.createTodoItem(label)],
+      todoData: [...todoData, this.createTodoItem(label, min, sec)],
     }))
   }
 
@@ -108,6 +111,24 @@ export default class App extends Component {
     })
   }
 
+  onTimerChange = (time, id) => {
+    this.setState(({ todoData }) => {
+      const index = todoData.findIndex((element) => element.id === id)
+
+      const oldItem = todoData[index]
+      const newItem = { ...oldItem, timeLeft: time <= 0 ? 0 : time }
+
+      const newArr = [
+        ...todoData.slice(0, index),
+        newItem,
+        ...todoData.slice(index + 1),
+      ]
+      return {
+        todoData: newArr,
+      }
+    })
+  }
+
   render() {
     const { todoData, filter } = this.state
     const todoLeft = todoData.filter((el) => !el.done).length
@@ -123,8 +144,8 @@ export default class App extends Component {
           onDeleted={this.deleteItem}
           onToggleDone={this.onToggleDone}
           editLabel={this.editLabel}
+          onTimerChange={this.onTimerChange}
         />
-
         <Footer
           left={todoLeft}
           filter={filter}
