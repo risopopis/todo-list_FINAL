@@ -1,31 +1,28 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 
 import "./footer.css";
 
-export default class Footer extends Component {
-  buttonsData = [
+function Footer ({left, filter, switchFilter, clearCompleted}) {
+  const buttonsData = [
     { name: "all", label: "All" },
     { name: "active", label: "Active" },
     { name: "completed", label: "Completed" },
   ];
 
+  const buttons = buttonsData.map(({ name, label }) => (
+        <li className="btn-filter-item" key={name}>
+          <input type="radio" id={name}
+          name="radio-btn"
+          className="radio-btn"/>
+          <htmlFor id={name}
+          className={filter === name ? "selected" : ""}
+          onClick={() => {
+          switchFilter(name);
+          }}>{label}</htmlFor>
+        </li>
+      ));
   
-
-  render() {
-    const { left, filter, switchFilter, clearCompleted } = this.props;
-    const buttons = this.buttonsData.map(({ name, label }) => (
-      <li className="btn-filter-item" key={name}>
-        <input type="radio" id={name}
-        name="radio-btn"
-        className="radio-btn"/>
-        <htmlFor id={name}
-        className={filter === name ? "selected" : ""}
-        onClick={() => {
-        switchFilter(name);
-        }}>{label}</htmlFor>
-      </li>
-    ));
 
     return (
       <footer className="footer">
@@ -43,7 +40,9 @@ export default class Footer extends Component {
       </footer>
     );
   }
-}
+
+
+export default Footer
 
 Footer.defaultProps = {
   left: -1,

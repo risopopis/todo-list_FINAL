@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { useState, useEffect } from "react"
 import ReactDOM from "react-dom"
 import AppHeader from "./components/App-header/app-header"
 import NewPanel from "./components/NewTaskForm/new-task-form"
@@ -7,24 +7,14 @@ import Footer from "./components/Footer/footer"
 
 import "./index.css"
 
-export default class App extends Component {
-  constructor() {
-    super(),
-      (this.state = {
-        todoData: [
-          this.createTodoItem("Drink Cofee", 1, 30),
-          this.createTodoItem("Make Awesome App", 1, 30),
-          this.createTodoItem("Take a break", 1, 30),
-        ],
-        filter: "all",
-      })
-  }
+export default function App() {
+  const [filter, setFilter] = useState("all")
 
-  maxId = () => {
+  const maxId = () => {
     return Math.random(1, 500)
   }
 
-  filter(items, filter) {
+  const filters = (items, filter) => {
     switch (filter) {
       case "all":
         return items
@@ -37,25 +27,20 @@ export default class App extends Component {
     }
   }
 
-  editLabel = (label, id) => {
-    this.setState(({ todoData }) => {
-      const itemIdx = todoData.findIndex((element) => element.id === id)
-
-      return {
-        todoData: [
-          ...todoData.slice(0, itemIdx),
-          { ...todoData[itemIdx], label: label },
-          ...todoData.slice(itemIdx + 1),
-        ],
-      }
-    })
+  const editLabel = (label, id) => {
+    const itemIdx = todoData.findIndex((element) => element.id === id)
+    setTodoData([
+      ...todoData.slice(0, itemIdx),
+      { ...todoData[itemIdx], label: label },
+      ...todoData.slice(itemIdx + 1),
+    ])
   }
 
-  createTodoItem(label, min = 0, sec = 0) {
+  const createTodoItem = (label, min = 0, sec = 0) => {
     return {
       label,
       done: false,
-      id: this.maxId(),
+      id: maxId(),
       created: Date.now(),
       timeLeft: min * 60 + sec,
       isTimerActive: false,
@@ -63,105 +48,89 @@ export default class App extends Component {
     }
   }
 
-  appendTodoItem(label, min, sec) {
-    this.setState(({ todoData }) => ({
-      todoData: [...todoData, this.createTodoItem(label, min, sec)],
-    }))
+  const [todoData, setTodoData] = useState([
+    createTodoItem("Drink Cofee", 1, 30),
+    createTodoItem("Make Awesome App", 1, 30),
+    createTodoItem("Take a break", 1, 30),
+  ])
+
+  const appendTodoItem = (label, min, sec) => {
+    setTodoData([...todoData, createTodoItem(label, min, sec)])
   }
 
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const itemIdx = todoData.findIndex((element) => element.id === id)
-      return {
-        todoData: [
-          ...todoData.slice(0, itemIdx),
-          ...todoData.slice(itemIdx + 1),
-        ],
-      }
-    })
+  const deleteItem = (id) => {
+    const itemIdx = todoData.findIndex((element) => element.id === id)
+    setTodoData([...todoData.slice(0, itemIdx), ...todoData.slice(itemIdx + 1)])
   }
 
-  onToggleDone = (id) => {
-    this.setState(({ todoData }) => {
-      const itemIdx = todoData.findIndex((element) => element.id === id)
+  const onToggleDone = (id) => {
+    const itemIdx = todoData.findIndex((element) => element.id === id)
+    const oldItem = todoData[itemIdx]
+    const newItem = { ...oldItem, done: !oldItem.done }
 
-      const oldItem = todoData[itemIdx]
-      const newItem = { ...oldItem, done: !oldItem.done }
-
-      const newArr = [
-        ...todoData.slice(0, itemIdx),
-        newItem,
-        ...todoData.slice(itemIdx + 1),
-      ]
-      return {
-        todoData: newArr,
-      }
-    })
+    const newArr = [
+      ...todoData.slice(0, itemIdx),
+      newItem,
+      ...todoData.slice(itemIdx + 1),
+    ]
+    setTodoData(newArr)
+    return newArr
   }
 
-  switchFilter = (filter) => {
-    this.setState({
-      filter,
-    })
+  const switchFilter = (filter) => {
+    setFilter(filter)
   }
 
-  clearCompleted = () => {
-    this.setState({
-      todoData: this.state.todoData.filter((item) => !item.done),
-    })
+  const clearCompleted = () => {
+    setTodoData(todoData.filter((item) => !item.done))
   }
 
-  onTimerStatusChange = (id) => {
-    this.setState(({ todoData }) => {
-      const index = todoData.findIndex((element) => element.id === id)
-      const oldItem = todoData[index]
-      const newItem = {
-        ...oldItem,
-        isTimerActive: !oldItem.isTimerActive,
-        timeLeft: oldItem.isTimerActive
-          ? Math.round(
-              oldItem.timeLeft - (Date.now() - oldItem.timerStartedAt) / 1000
-            )
-          : oldItem.timeLeft,
-        timerStartedAt: !oldItem.isTimerActive ? Date.now() : null,
-      }
-      const newArr = [
-        ...todoData.slice(0, index),
-        newItem,
-        ...todoData.slice(index + 1),
-      ]
-      return {
-        todoData: newArr,
-      }
-    })
+  const onTimerStatusChange = (id) => {
+    const index = todoData.findIndex((element) => element.id === id)
+    const oldItem = todoData[index]
+    const newItem = {
+      ...oldItem,
+      isTimerActive: !oldItem.isTimerActive,
+      timeLeft: oldItem.isTimerActive
+        ? Math.round(
+            oldItem.timeLeft - (Date.now() - oldItem.timerStartedAt) / 1000
+          )
+        : oldItem.timeLeft,
+      timerStartedAt: !oldItem.isTimerActive ? Date.now() : null,
+    }
+    const newArr = [
+      ...todoData.slice(0, index),
+      newItem,
+      ...todoData.slice(index + 1),
+    ]
+    setTodoData(newArr)
+    return newArr
   }
 
-  render() {
-    const { todoData, filter } = this.state
-    const todoLeft = todoData.filter((el) => !el.done).length
-    const itemsRender = this.filter(todoData, filter)
-    return (
-      <div className='todo-app'>
-        <AppHeader />
-        <div className='top-panel d-flex'>
-          <NewPanel appendTodoItem={this.appendTodoItem.bind(this)} />
-        </div>
-        <TodoList
-          todos={itemsRender}
-          onDeleted={this.deleteItem}
-          onToggleDone={this.onToggleDone}
-          editLabel={this.editLabel}
-          onTimerStatusChange={this.onTimerStatusChange}
-        />
-        <Footer
-          left={todoLeft}
-          filter={filter}
-          switchFilter={this.switchFilter}
-          clearCompleted={this.clearCompleted}
-        />
+  const todoLeft = todoData.filter((el) => !el.done).length
+  const itemsRender = filters(todoData, filter)
+
+  return (
+    <div className='todo-app'>
+      <AppHeader />
+      <div className='top-panel d-flex'>
+        <NewPanel appendTodoItem={appendTodoItem.bind(this)} />
       </div>
-    )
-  }
+      <TodoList
+        todos={itemsRender}
+        onDeleted={deleteItem}
+        onToggleDone={onToggleDone}
+        editLabel={editLabel}
+        onTimerStatusChange={onTimerStatusChange}
+      />
+      <Footer
+        left={todoLeft}
+        filter={filter}
+        switchFilter={switchFilter}
+        clearCompleted={clearCompleted}
+      />
+    </div>
+  )
 }
 
 ReactDOM.render(<App />, document.getElementById("root"))

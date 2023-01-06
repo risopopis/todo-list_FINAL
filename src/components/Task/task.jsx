@@ -1,94 +1,83 @@
-import React, { Component } from "react";
+import React, { useState, useEffect} from "react";
 import PropTypes from "prop-types";
 import { formatDistanceToNow } from 'date-fns'
 import "./task.css";
 
 
 
-export default class TodoListItem extends Component {
-  state = {
-    timeToNow: formatDistanceToNow(this.props.created),
-    isEditing: false,
-    editedValue: '',
-    timerValue: this.getTimerValue(this.props.timeLeft, this.props.timerStartedAt)
+export default function TodoListItem ({
+  created, timeLeft, timerStartedAt, editLabel, id, onTimerStatusChange, isTimerActive,
+  done, onToggleDone, label, onDeleted, timerID
+}) {
+
+  const [timeToNow, setTimetoNow ] = useState(formatDistanceToNow(created))
+  const [isEditing, setEditing] = useState(false)
+  const [editedValue, setEditValue] = useState("")
+
+
+ const switchEditing = () => {
+    setEditing(!isEditing)
   }
 
-  switchEditing = () => {
-    this.setState({
-      isEditing: !this.state.isEditing
-    })
-  }
-
-  getTimerValue(s, startedAt){
+  const getTimerValue = (s, startedAt) => {
    if (startedAt) s -= Math.round((Date.now() - startedAt)/1000)
     return (s-(s%=60))/60+(9<s? ' min ' :':0')+s+" sec "
   }
 
-  setEditedValue = (e) => {
+
+    const [timerValue, setTimerValue] = useState(getTimerValue(timeLeft, timerStartedAt))
+
+  const setEditedValue = (e) => {
     if (e.key === 'Enter' && e.target.value !== ''){
-      const { editedValue } = this.state
-      this.props.editLabel(editedValue, this.props.id)
-      this.setState({
-        isEditing: false
-      })
+      // const { editedValue } = this.state
+     editLabel(editedValue, id)
+      setEditing(false)
     }
   }
 
-  componentDidMount() {
-    if (this.props.isTimerActive){
-      this.timerID = setInterval(() => this.tick(), 1000)
-    }
-  }
+ useEffect(()=>{
+  if (isTimerActive){
+        timerID = setInterval(() => tick(), 1000)
+      }
+ }, [isTimerActive])
 
-  componentWillUnmount() {
+ useEffect(()=>{
+  clearInterval(timerID)
+ }, [])
 
-    clearInterval(this.timerID)
-  }
 
 
-  tick() {
-    this.setState((oldState)=>
-    ({ ...oldState, timeToNow: formatDistanceToNow(this.props.created),
-      timerValue: this.getTimerValue(this.props.timeLeft, this.props.timerStartedAt) })
-    )
-  
+  const tick = () => {
+    setTimetoNow(formatDistanceToNow(created))
+    setTimerValue(getTimerValue(timeLeft, timerStartedAt))
   }
 
   
-  timerSwitch(id){
-    this.props.onTimerStatusChange(id)
-    if (this.timerID){
-      clearInterval(this.timerID)
-      this.timerID = null
+  const timerSwitch = (id) => {
+    onTimerStatusChange(id)
+    if (timerID){
+      clearInterval(timerID)
+      timerID = null
       return 
     }
-    this.timerID = setInterval(()=>{
-      this.tick()
+    timerID = setInterval(()=>{
+      tick()
     }, 1000)
   }
 
 
-  render() {
-     let classNames = require('classnames')
-    const {
-      label, onDeleted, onToggleDone, done, id
-    } = this.props
-    const {timeLeft} = this.props
-    const {timerValue} = this.state
+   let classNames = require('classnames')
     let liClasses = classNames({
-    'todo-list__li': true,
-      ' completed': done,
-
+      'todo-list__li': true,
+       ' completed': done,
     })
+  //  
     
-    if (this.state.isEditing){
+    if (isEditing){
       liClasses = 'todo-list__li_editing'
     }
-
-
     
     return (
-      
       <li className={liClasses}>
         <div className='task'>
           <input
@@ -105,12 +94,12 @@ export default class TodoListItem extends Component {
             <button
             className="icon-play" 
               onClick={() =>
-              this.timerSwitch(id)
+              timerSwitch(id)
              }
            /> 
         <button className="icon-pause" 
         onClick={()=>{
-             this.timerSwitch(id) 
+        timerSwitch(id) 
             }
             }
                />
@@ -122,26 +111,27 @@ export default class TodoListItem extends Component {
             </span>
             <span className='created'>
               Created {' '}
-              {this.state.timeToNow}
+              {timeToNow}
               {' '}
               ago
             </span>
           
           </label>
-          <button className=' btn icon icon-edit' onClick={this.switchEditing}/>
+          <button className=' btn icon icon-edit' onClick={switchEditing}/>
           <button className=' btn icon icon-destroy' onClick={onDeleted} />
         </div>
         <input 
           type='text' 
           className='edit' 
           placeholder='Type new label' 
-          onChange={(e)=>{this.setState({editedValue: e.target.value})}}
-          onKeyDown={this.setEditedValue}
+          onChange={(e)=>{setEditValue(e.target.value)}}
+          onKeyDown={setEditedValue}
         />
       </li>
     )
   }
-}
+
+  
 TodoListItem.defaultProps = {
   label: 'undefiend',
   onDeleted: () => {},
@@ -163,5 +153,6 @@ TodoListItem.propTypes = {
   timeLeft: PropTypes.number,
   onTimerStatusChange: PropTypes.func,
   isTimerActive: PropTypes.bool,
-  timerStartedAt: PropTypes.number
+  timerStartedAt: PropTypes.number,
+  timerID: PropTypes.number
 }
