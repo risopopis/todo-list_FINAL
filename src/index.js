@@ -5,14 +5,19 @@ import NewPanel from "./components/NewTaskForm/new-task-form"
 import TodoList from "./components/Task-List/task-list"
 import Footer from "./components/Footer/footer"
 
+import { nanoid } from "nanoid"
+
 import "./index.css"
 
 export default function App() {
   const [filter, setFilter] = useState("all")
+  const [todoData, setTodoData] = useState([
+    createTodoItem("Drink Cofee", 1, 30),
+    createTodoItem("Make Awesome App", 1, 30),
+    createTodoItem("Take a break", 1, 30),
+  ])
 
-  const maxId = () => {
-    return Math.random(1, 500)
-  }
+  const maxId = nanoid()
 
   const filters = (items, filter) => {
     switch (filter) {
@@ -47,12 +52,6 @@ export default function App() {
       timerStartedAt: null,
     }
   }
-
-  const [todoData, setTodoData] = useState([
-    createTodoItem("Drink Cofee", 1, 30),
-    createTodoItem("Make Awesome App", 1, 30),
-    createTodoItem("Take a break", 1, 30),
-  ])
 
   const appendTodoItem = (label, min, sec) => {
     setTodoData([...todoData, createTodoItem(label, min, sec)])
