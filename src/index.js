@@ -11,13 +11,6 @@ import "./index.css"
 
 export default function App() {
   const [filter, setFilter] = useState("all")
-  const [todoData, setTodoData] = useState([
-    createTodoItem("Drink Cofee", 1, 30),
-    createTodoItem("Make Awesome App", 1, 30),
-    createTodoItem("Take a break", 1, 30),
-  ])
-
-  const maxId = nanoid()
 
   const filters = (items, filter) => {
     switch (filter) {
@@ -45,13 +38,19 @@ export default function App() {
     return {
       label,
       done: false,
-      id: maxId(),
+      id: nanoid(4),
       created: Date.now(),
       timeLeft: min * 60 + sec,
       isTimerActive: false,
       timerStartedAt: null,
     }
   }
+
+  const [todoData, setTodoData] = useState([
+    createTodoItem("Drink Cofee", 1, 30),
+    createTodoItem("Make Awesome App", 1, 30),
+    createTodoItem("Take a break", 1, 30),
+  ])
 
   const appendTodoItem = (label, min, sec) => {
     setTodoData([...todoData, createTodoItem(label, min, sec)])
